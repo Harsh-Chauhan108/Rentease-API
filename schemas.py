@@ -12,3 +12,6 @@ class RegisterSchema(BaseModel):
         return value.upper()
 
 
+class LoginSchema(BaseModel):
+    email: EmailStr
+    password: str
