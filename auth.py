@@ -59,3 +59,18 @@ def login(
     "refresh_token": refresh_token,
     "token_type": "bearer"
     }
+@app.post("/logout")
+def logout(
+refresh_token: str,
+db: Session = Depends(get_db)
+):
+    user = db.query(models.User).filter(
+    models.User.refresh_token == refresh_token
+    ).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+    user.refresh_token = None
+    db.commit()
+    return {
+    "message": "Logged out successfully"
+    }
