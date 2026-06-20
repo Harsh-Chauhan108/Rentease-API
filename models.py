@@ -9,3 +9,4 @@ class User(Base):
     email = Column(String(100), unique=True)
     password = Column(String(255))
     role = Column(String(50)) 
+    refresh_token = Column(String(500), nullable=True)
