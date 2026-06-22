@@ -15,3 +15,9 @@ class RegisterSchema(BaseModel):
 class LoginSchema(BaseModel):
     email: EmailStr
     password: str
+
+class PropertySchema(BaseModel):
+    title: str
+    city: str
+    rent: int
+    description: str
