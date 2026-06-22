@@ -30,35 +30,45 @@ def register(user: schemas.RegisterSchema ,
     db.commit()
     return {'msg':'User registered successfully'}
 
+
+from fastapi.security import OAuth2PasswordRequestForm
+
 @app.post("/login")
 def login(
     request: Request,
-    user: schemas.LoginSchema,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
     existing_user = db.query(models.User).filter(
-    models.User.email == user.email
+        models.User.email == form_data.username
     ).first()
+
     if not existing_user:
-        return {'msg': "User Not Found"}
+        raise HTTPException(404, "User Not Found")
+
     if not verify_password(
-    user.password,
-    existing_user.password
+        form_data.password,
+        existing_user.password
     ):
-        return {'msg': "Wrong Password"}
+        raise HTTPException(401, "Wrong Password")
+
     access_token = create_access_token({
-    "id": existing_user.id
+        "id": existing_user.id
     })
+
     refresh_token = create_refresh_token({
-    "id": existing_user.id
+        "id": existing_user.id
     })
+
     existing_user.refresh_token = refresh_token
     db.commit()
+
     return {
-    "access_token": access_token,
-    "refresh_token": refresh_token,
-    "token_type": "bearer"
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer"
     }
+
 @app.post("/logout")
 def logout(
 refresh_token: str,
@@ -87,7 +97,7 @@ property: schemas.PropertySchema,
 db: Session = Depends(get_db),
 current_user = Depends(get_current_user)
 ):
-    if current_user.role != "owner":
+    if current_user.role != "OWNER":
         raise HTTPException(403,
           "Only owners can add property"
         )
