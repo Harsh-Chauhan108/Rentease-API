@@ -4,8 +4,14 @@ from fastapi import Depends, HTTPException, status,FastAPI
 from hashing import verify_password, hash_password
 import schemas,models
 from sqlalchemy.orm import Session
-from tokens import create_access_token,create_refresh_token
 from fastapi.requests import Request
+from tokens import (
+    create_access_token,
+    create_refresh_token,
+    SECRET_KEY,
+    ALGORITHM
+)
+from jose import jwt
 
 app=FastAPI()
 Base.metadata.create_all(bind=engine)
@@ -67,6 +73,39 @@ def login(
         "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "bearer"
+    }
+@app.post("/refresh")
+def refresh_token(
+refresh_token: str,
+db: Session = Depends(get_db)
+):
+    try:
+        payload = jwt.decode(
+        refresh_token,
+        SECRET_KEY,
+        algorithms=[ALGORITHM]
+        )
+        user_id = payload.get("id")
+    except:
+        raise HTTPException(
+        401,
+        "Invalid Refresh Token"
+        )
+    user = db.query(models.User).filter(
+    models.User.id == user_id
+    ).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+    if user.refresh_token != refresh_token:
+        raise HTTPException(
+        401,
+        "Token mismatch"
+        )
+    new_access_token = create_access_token({
+    "id": user.id
+    })
+    return {
+    "access_token": new_access_token
     }
 
 @app.post("/logout")
