@@ -14,6 +14,10 @@ class User(Base):
         "Property",
         back_populates="owner"
     )
+    bookings = relationship(
+        "Booking",
+        back_populates="tenant"
+    )
 
 class Property(Base):
     __tablename__ = "properties"
@@ -29,4 +33,28 @@ class Property(Base):
     owner = relationship(
         "User",
         back_populates="properties"
+    )
+    bookings = relationship(
+        "Booking",
+        back_populates="property"
+    )
+class Booking(Base):
+    __tablename__ = "bookings"
+    id = Column(Integer, primary_key=True)
+    tenant_id = Column(
+        Integer,
+        ForeignKey("users.id")
+    )
+    property_id = Column(
+        Integer,
+        ForeignKey("properties.id")
+    )
+    status = Column(String(20), default="pending")
+    tenant = relationship(
+        "User",
+        back_populates="bookings"
+    )
+    property = relationship(
+        "Property",
+        back_populates="bookings"
     )

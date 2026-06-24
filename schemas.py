@@ -21,3 +21,14 @@ class PropertySchema(BaseModel):
     city: str
     rent: int
     description: str
+
+class BookingSchema(BaseModel):
+    property_id: int
+class PropertyResponse(BaseModel):
+    id: int
+    title: str
+    city: str
+    rent: int
+    description: str
+    class Config:
+        from_attributes = True
