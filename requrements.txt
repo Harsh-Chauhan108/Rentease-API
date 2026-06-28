@@ -3,3 +3,7 @@ uvicorn
 sqlalchemy
 pymysql
 passlib[bcrypt]
+python-jose
+python-multipart
+slowapi
+email-validator

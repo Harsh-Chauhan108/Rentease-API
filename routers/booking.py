@@ -16,7 +16,7 @@ booking: schemas.BookingSchema,
 db: Session = Depends(get_db),
 current_user = Depends(get_current_user)
 ):
-    if current_user.role != "tenant":
+    if current_user.role != "TENANT":
         raise HTTPException(
         403,
         "Only tenants can book properties"
