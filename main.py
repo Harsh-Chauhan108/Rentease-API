@@ -5,12 +5,19 @@ from routers import (
     property,
     booking
 )
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
+
 from middleware import log_requests
 from slowapi.middleware import SlowAPIMiddleware
 Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="RentEase API"
 )
+limiter = Limiter(key_func=get_remote_address)
+
+app.state.limiter = limiter
 
 app.add_middleware(SlowAPIMiddleware)
 app.middleware("http")(log_requests)
