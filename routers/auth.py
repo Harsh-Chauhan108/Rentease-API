@@ -124,10 +124,5 @@ db: Session = Depends(get_db)
     "message": "Logged out successfully"
     }
 
-from dependencies import (
-    get_current_user,
-    get_db
-)
-
 
 
