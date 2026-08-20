@@ -1,5 +1,5 @@
 from pydantic import BaseModel,EmailStr,field_validator
-from typing import Literal
+from typing import Literal, Optional
 
 class RegisterSchema(BaseModel):
     name:str
@@ -21,6 +21,12 @@ class PropertySchema(BaseModel):
     city: str
     rent: int
     description: str
+
+class PropertyUpdate(BaseModel):
+    title: Optional[str] = None
+    city: Optional[str] = None
+    rent: Optional[int] = None
+    description: Optional[str] = None
 
 class BookingSchema(BaseModel):
     property_id: int
