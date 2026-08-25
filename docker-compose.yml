@@ -1,0 +1,41 @@
+services:
+
+  api:
+    build: .
+    container_name: rentease_api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - .:/app
+
+  mysql:
+    image: mysql:8.0
+    container_name: rentease_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "9713"
+      MYSQL_DATABASE: rentease
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p9713"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:latest
+    container_name: rentease_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  mysql_data:

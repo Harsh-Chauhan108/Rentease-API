@@ -1,0 +1,9 @@
+myenv2/
+venv/
+env/
+__pycache__/
+*.pyc
+.git/
+.vscode/
+.idea/
+.env
