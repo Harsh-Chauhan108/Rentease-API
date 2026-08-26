@@ -1,6 +1,6 @@
 
 from database import SessionLocal,Base,engine
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException
 from hashing import verify_password, hash_password
 import schemas,models
 from sqlalchemy.orm import Session
@@ -31,7 +31,11 @@ def register(user: schemas.RegisterSchema ,
     if existing_user:
         return {'msg':'User already exists'}
     hashed_password =hash_password(user.password)
-    new_user = models.User(name=user.name,email=user.email,password=hashed_password,role=user.role)
+    new_user = models.User(
+        name=user.name,
+        email=user.email,
+        password=hashed_password,
+        role=user.role)
     db.add(new_user)
     db.commit()
     return {'msg':'User registered successfully'}
